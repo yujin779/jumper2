@@ -7,6 +7,7 @@ import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
 import { Physics, useBox, usePlane, useSphere } from "use-cannon";
 import { useGlobalState } from "../Global";
 import { useStore } from "../Global";
+import { BoxBufferGeometry } from "three";
 
 const speed = 0.1;
 
@@ -23,14 +24,51 @@ export const createEnemysList = (number, startX) => {
   return enemysList;
 };
 
-const Enemy = () => {
-  return null;
+const Enemy = ({ value }) => {
+  console.log("group", value);
+  // 物理演算させるボックスのサイズ
+  const args = [2, 2, 1];
+  const physicsBox = {
+    type: "Static",
+    fixedRotation: true,
+    mass: 1,
+    args: args
+  };
+  const [ref, api] = useBox(() => physicsBox);
+  useFrame(() => {
+    api.position.set(
+      value[0].position.x,
+      value[0].position.y,
+      value[0].position.z
+    );
+  });
+  return (
+    <group ref={ref}>
+      {value.map((value) => (
+        <mesh
+          position={[
+            value.position.x,
+            value.position.y,
+            value.position.z
+          ]}
+        >
+          <boxBufferGeometry attach="geometry" args={args} />
+          <meshStandardMaterial
+            attach="material"
+            color={"orange"}
+            transparent
+            opacity={0.3}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
 };
 
 /*
  * 接触するとgameover
  */
-const EnemyData = ({ number }) => {
+export const EnemyData = ({ number }) => {
   // const positionCreate =
   const [groupA, setGroupA] = useState(createEnemysList(number, 15));
   // const [obj2, setObj2] = useState(
@@ -58,6 +96,10 @@ const EnemyData = ({ number }) => {
     //   setObj(createEnemysList(number, obj2[obj2.length - 1].position[0]));
   });
 
-  return null;
+  return (
+    <group>
+      <Enemy value={groupA} />
+    </group>
+  );
 };
-export default EnemyData;
+// export default EnemyData;
