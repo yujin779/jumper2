@@ -12,7 +12,7 @@ import styles from "./styles";
 
 import Floor from "./components/Floor";
 import Player from "./components/Player";
-import Enemy from "./components/Enemy";
+import EnemyData from "./components/Enemy";
 
 /*
  * 1. 表示される入り口
@@ -51,7 +51,7 @@ const App = () => {
           defaultContactMaterial={{ restitution: 0 }}
         >
           <Player />
-          <Enemy number={2} />
+          <EnemyData number={2} />
           {/* <Enemy /> */}
           <Floor position={[0, -1, 0]} args={[1500, 0.5, 3]} />
         </Physics>
