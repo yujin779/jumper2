@@ -13,6 +13,6 @@ export const useStore = create((set) => ({
   tapTrue: () => set((state) => ({ tap: true })),
   tapFalse: () => set((state) => ({ tap: false })),
   speed: 0.08,
-  enemyEnd: 0,
-  setEnemyEnd: (x) => set((state) => ({ enemyEnd: x }))
+  enemyGroupA: {},
+  setEnemyGroupA: (x) => set((state) => ({ enemyGroupA: x }))
 }));
