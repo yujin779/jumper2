@@ -21,7 +21,7 @@ export const createEnemysList = (number, startX) => {
 
     enemysList.push({ position: { x: p, y: 1, z: 0 } });
   }
-  // console.log("enemysList", enemysList);
+  console.log("enemysList", enemysList);
   return enemysList;
 };
 
@@ -64,7 +64,7 @@ const Enemy = ({ value }) => {
  */
 export const EnemyData = ({ number }) => {
   // この値になったら位置を再設定
-  const returnX = -50;
+  const returnX = 0;
   const startX = 10;
   // const positionCreate =
   const [groupA, setGroupA] = useState(createEnemysList(number, startX));
@@ -72,19 +72,21 @@ export const EnemyData = ({ number }) => {
   const [groupB, setGroupB] = useState(
     createEnemysList(number, groupA[groupA.length - 1].position.x)
   );
+  const [jikkou, setJikkou] = useState(true);
   // const [obj2, setObj2] = useState(
   //   createEnemysList(number, obj[obj.length - 1].position[0])
   // );
   // const? obj = createEnemysList(3, 1);
   // const [landing, setLanding] = useState(false);
   useFrame(() => {
-    groupA.map((p) => (p.position.x -= speed));
-    groupB.map((p) => (p.position.x -= speed));
+    if (jikkou) groupA.map((p) => (p.position.x -= speed));
+    if (jikkou) groupB.map((p) => (p.position.x -= speed));
 
     if (groupA[groupA.length - 1].position.x < returnX) {
       console.log("b", groupB[groupB.length - 1].position.x);
       setGroupA(createEnemysList(number, groupB[groupB.length - 1].position.x));
       console.log("a", groupA[0].position.x);
+      setJikkou(false);
     }
     // if (groupB[groupB.length - 1].position.x < returnX) {
     //   setGroupB(createEnemysList(number, groupA[groupA.length - 1].position.x));
