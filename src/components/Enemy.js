@@ -29,7 +29,7 @@ export const createEnemysList = (number, startX) => {
 const Enemy2 = ({ value, index }) => {
   // console.log("group", value);
   // 物理演算させるボックスのサイズ
-  const args = [5, 2, 1];
+  const args = [1, 2, 1];
   const physicsBox = {
     type: "Static",
     fixedRotation: true,
@@ -42,8 +42,9 @@ const Enemy2 = ({ value, index }) => {
     api.position.set(value.position.x, value.position.y, value.position.z);
   });
   return (
-    <group ref={ref}>
+    <group>
       <mesh
+        ref={ref}
         position={[value.position.x, value.position.y, value.position.z]}
         key={index}
       >
@@ -70,7 +71,7 @@ export const EnemyData = ({ number }) => {
     mass: 1,
     args: args,
     name: "end",
-position: [-2,0,0],
+    position: [-2, 0, 0],
     onCollide: (obj) => {
       // if (obj.body.name === "floor") setLanding(true);
       // if (obj.body.name === "enemy") {
