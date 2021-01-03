@@ -9,7 +9,7 @@ import { useGlobalState } from "../Global";
 import { useStore } from "../Global";
 import { BoxBufferGeometry } from "three";
 
-const speed = 0.1;
+const speed = 0.04;
 
 export const createEnemysList = (number, startX) => {
   const enemysList = [];
@@ -17,44 +17,44 @@ export const createEnemysList = (number, startX) => {
   // const number = 10;
   for (let i = 0; i < number; i++) {
     let p = startX;
+    console.log("sttx", p);
     if (i !== 0) p = enemysList[i - 1].position.x + 5;
 
-    enemysList.push({ position: { x: p, y: 1, z: 0 } });
+    enemysList.push({ position: { x: p, y: 0, z: 0 } });
   }
   console.log("enemysList", enemysList);
   return enemysList;
 };
 
-const Enemy = ({ value }) => {
+const Enemy2 = ({ value, index }) => {
   // console.log("group", value);
   // 物理演算させるボックスのサイズ
-  const args = [2, 2, 1];
+  const args = [5, 2, 1];
   const physicsBox = {
     type: "Static",
     fixedRotation: true,
     mass: 1,
-    args: args
+    args: args,
+    position: [value.position.x, value.position.y, value.position.z]
   };
   const [ref, api] = useBox(() => physicsBox);
   useFrame(() => {
-    api.position.set(value[0].position.x, 0, 0);
+    api.position.set(value.position.x, value.position.y, value.position.z);
   });
   return (
     <group ref={ref}>
-      {value.map((value, index) => (
-        <mesh
-          position={[value.position.x, value.position.y, value.position.z]}
-          key={index}
-        >
-          <boxBufferGeometry attach="geometry" args={args} />
-          <meshStandardMaterial
-            attach="material"
-            color={"orange"}
-            transparent
-            opacity={0.3}
-          />
-        </mesh>
-      ))}
+      <mesh
+        position={[value.position.x, value.position.y, value.position.z]}
+        key={index}
+      >
+        <boxBufferGeometry attach="geometry" args={args} />
+        <meshStandardMaterial
+          attach="material"
+          color={"orange"}
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
     </group>
   );
 };
@@ -63,45 +63,50 @@ const Enemy = ({ value }) => {
  * 接触するとgameover
  */
 export const EnemyData = ({ number }) => {
+  const args = [2, 2, 1];
+  const physicsBox = {
+    type: "Static",
+    fixedRotation: true,
+    mass: 1,
+    args: args,
+    name: "end",
+position: [-2,0,0],
+    onCollide: (obj) => {
+      // if (obj.body.name === "floor") setLanding(true);
+      // if (obj.body.name === "enemy") {
+      //   console.log("gameover");
+      console.log("end");
+    }
+  };
+  const [ref, api] = useBox(() => physicsBox);
   // この値になったら位置を再設定
   const returnX = 0;
   const startX = 10;
   // const positionCreate =
-  const [groupA, setGroupA] = useState(createEnemysList(number, startX));
-  console.log("gp", groupA[groupA.length - 1].position.x);
-  const [groupB, setGroupB] = useState(
-    createEnemysList(number, groupA[groupA.length - 1].position.x)
-  );
-  const [jikkou, setJikkou] = useState(true);
-  // const [obj2, setObj2] = useState(
-  //   createEnemysList(number, obj[obj.length - 1].position[0])
-  // );
-  // const? obj = createEnemysList(3, 1);
-  // const [landing, setLanding] = useState(false);
+  const [groupA] = useState(createEnemysList(number, startX));
+
   useFrame(() => {
-    if (jikkou) groupA.map((p) => (p.position.x -= speed));
-    if (jikkou) groupB.map((p) => (p.position.x -= speed));
-
-    if (groupA[groupA.length - 1].position.x < returnX) {
-      console.log("b", groupB[groupB.length - 1].position.x);
-      setGroupA(createEnemysList(number, groupB[groupB.length - 1].position.x));
-      console.log("a", groupA[0].position.x);
-      setJikkou(false);
-    }
-    // if (groupB[groupB.length - 1].position.x < returnX) {
-    //   setGroupB(createEnemysList(number, groupA[groupA.length - 1].position.x));
+    // if (jikkou)
+    groupA.map((p) => (p.position.x -= speed));
+    // for (let i = 0; i < groupA.length; i++) {
+    //   if (groupA[i].position.x < returnX) groupA[i].position.x = 50;
     // }
-
-    // console.log(groupA[groupA.length - 1].position.x);
-    // const p = obj[obj.length - 1].position[0];
-    // if (p < -14)
-    //   setObj(createEnemysList(number, obj2[obj2.length - 1].position[0]));
   });
 
   return (
     <group>
-      <Enemy value={groupA} />
-      <Enemy value={groupB} />
+      {groupA.map((value, index) => (
+        <Enemy2 value={value} key={index} />
+      ))}
+      <mesh name="end" ref={ref}>
+        <boxBufferGeometry attach="geometry" args={args} />
+        <meshStandardMaterial
+          attach="material"
+          color={"orange"}
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
     </group>
   );
 };

@@ -26,7 +26,7 @@ const App = () => {
       <Canvas
         camera={{
           // position: [-0.2, 3, 10],
-          position: [0, 3, 70],
+          position: [0, 0, 50],
           // lookAt: [0, 0, 0],
           // rotation: [0.1, -0.2, 0],
           // quaternion: [0.0, -0.1, 0.0],
@@ -51,7 +51,7 @@ const App = () => {
           defaultContactMaterial={{ restitution: 0 }}
         >
           <Player />
-          <EnemyData number={2}>{/* <Enemy /> */}</EnemyData>
+          <EnemyData number={5}>{/* <Enemy /> */}</EnemyData>
           {/* <Enemy /> */}
           <Floor position={[0, -1, 0]} args={[1500, 0.5, 3]} />
         </Physics>

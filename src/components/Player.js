@@ -23,11 +23,11 @@ const Player = () => {
 
   const [landing, setLanding] = useState(false);
   const [ref, api] = useBox(() => ({
-    type: "Static",
+    // type: "Static",
     fixedRotation: true,
     mass: 1,
     args: args,
-    position: [-3, 3, 0],
+    position: [0, 3, 0],
     onCollide: (obj) => {
       if (obj.body.name === "floor") setLanding(true);
       if (obj.body.name === "enemy") {
