@@ -21,7 +21,7 @@ const App = () => {
     <View style={styles.app}>
       <Canvas
         camera={{
-          position: [0, 0, 30],
+          position: [0, 0, 10],
           near: 0.1,
           far: 500
         }}

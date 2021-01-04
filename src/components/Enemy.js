@@ -15,24 +15,54 @@ import { useStore } from "../Global";
 import { BoxBufferGeometry } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import littleCactus from "../assets/gltf/littleCactus.glb";
+import bigCactus from "../assets/gltf/bigCactus.glb";
 import { useGLTF, PerspectiveCamera } from "@react-three/drei";
 
 const speed = 0.04;
 
+const EnemisesObj = [littleCactus, bigCactus];
+
+const TypesOfEnemies = [
+  {
+    obj: {
+      name: "littleCactus",
+      gltfNum: 0,
+      position: { x: -2.6, y: -0.7 },
+      rotation: { x: 1.5 }
+    },
+    colider: {
+      args: [1.4, 1, 1],
+      position: { y: -0.1 }
+    }
+  },
+  {
+    obj: {
+      name: "bigCactus",
+      gltfNum: 1,
+      position: { x: -2.6, y: -0.7 },
+      rotation: { x: 1.5 }
+    },
+    colider: {
+      args: [1.4, 1, 1],
+      position: { y: -0.1 }
+    }
+  }
+];
+
 const EnemyColider = ({ value, index }) => {
   // 物理演算させるボックスのサイズ
-  const args = [1, 2, 1];
+  const args = value.type.colider.args;
   const physicsBox = {
     type: "Static",
     fixedRotation: true,
     mass: 1,
     args: args,
-    position: [value.positionX, 0, 0]
+    position: [value.positionX, value.type.colider.position.y, 0]
   };
   const [ref, api] = useBox(() => physicsBox);
   useFrame(() => {
     //ポジション修正要
-    api.position.set(value.positionX, 0, 0);
+    api.position.set(value.positionX, value.type.colider.position.y, 0);
   });
   return (
     <mesh ref={ref} key={index}>
@@ -49,8 +79,6 @@ const EnemyColider = ({ value, index }) => {
 
 export const createEnemysList = (number, startX, distance) => {
   const enemysList = [];
-  // const startX = 15;
-  // const number = 10;
   for (let i = 0; i < number; i++) {
     let p = startX;
     console.log("sttx", p);
@@ -62,26 +90,23 @@ export const createEnemysList = (number, startX, distance) => {
   return enemysList;
 };
 
-const TypesOfEnemies = [
-  {
-    obj: { position: { x: -2.5, y: -0.7 }, rotation: { x: 1.5 } }
-  }
-];
-
 const EnemyObj = ({ value, index }) => {
-  const { nodes, materials, animations } = useGLTF(littleCactus);
-  const gltfRef = useRef();
+  // const [, setObj] = useState(nodes);
+  const { nodes } = useGLTF(EnemisesObj[value.type.obj.gltfNum]);
+  const [obj, setObj] = useState(nodes);
+  console.log(obj);
+  const ref = useRef();
   useFrame(() => {
-    gltfRef.current.position.x = value.positionX + value.type.obj.position.x;
-    gltfRef.current.rotation.x = value.type.obj.rotation.x;
-    gltfRef.current.position.y = value.type.obj.position.y;
+    ref.current.position.x = value.positionX + value.type.obj.position.x;
+    ref.current.rotation.x = value.type.obj.rotation.x;
+    ref.current.position.y = value.type.obj.position.y;
   });
   return (
     <group>
       <mesh
-        ref={gltfRef}
-        material={nodes.ObjObject.material}
-        geometry={nodes.ObjObject.geometry}
+        ref={ref}
+        material={obj.ObjObject.material}
+        geometry={obj.ObjObject.geometry}
       />
     </group>
   );
@@ -90,21 +115,29 @@ const EnemyObj = ({ value, index }) => {
 /*
  * 接触するとgameover
  */
-export const EnemyData = ({ number }) => {
+export const EnemyData = ({ number = 10 }) => {
   // この値になったら位置を再設定
   const returnX = 0;
   const startX = 10;
   const distance = 3;
   const [groupA] = useState(createEnemysList(number, startX, distance));
-  console.log(groupA);
+  const [indexx, setIndexx] = useState("a");
+  console.log("TypesOfEnemies[0]", TypesOfEnemies[0]);
+  console.log("TypesOfEnemies[1]", TypesOfEnemies[1]);
+  // setIndexx("b");
+  // console.log(indexx);
   useFrame(() => {
     groupA.map((p) => {
-      if (p.positionX < returnX)
+      if (p.positionX < returnX) {
         p.positionX =
           Math.max.apply(
             null,
             groupA.map((o) => o.positionX)
           ) + distance;
+        // { positionX: p, type: TypesOfEnemies[0] }
+        p.type = TypesOfEnemies[1];
+        // setIndexx("b");
+      }
       return (p.positionX -= speed);
     });
   });
