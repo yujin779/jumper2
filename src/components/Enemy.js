@@ -64,22 +64,6 @@ const Enemy2 = ({ value, index }) => {
  * 接触するとgameover
  */
 export const EnemyData = ({ number }) => {
-  const args = [2, 2, 1];
-  const physicsBox = {
-    type: "Static",
-    fixedRotation: true,
-    mass: 1,
-    args: args,
-    name: "end",
-    position: [-2, 0, 0],
-    onCollide: (obj) => {
-      // if (obj.body.name === "floor") setLanding(true);
-      // if (obj.body.name === "enemy") {
-      //   console.log("gameover");
-      console.log("end");
-    }
-  };
-  const [ref, api] = useBox(() => physicsBox);
   // この値になったら位置を再設定
   const returnX = 0;
   const startX = 10;
@@ -87,11 +71,15 @@ export const EnemyData = ({ number }) => {
   const [groupA] = useState(createEnemysList(number, startX));
 
   useFrame(() => {
-    // if (jikkou)
-    groupA.map((p) => (p.position.x -= speed));
-    // for (let i = 0; i < groupA.length; i++) {
-    //   if (groupA[i].position.x < returnX) groupA[i].position.x = 50;
-    // }
+    groupA.map((p) => {
+      if (p.position.x < returnX)
+        p.position.x =
+          Math.max.apply(
+            null,
+            groupA.map((o) => o.position.x)
+          ) + 5;
+      return (p.position.x -= speed);
+    });
   });
 
   return (
@@ -99,15 +87,6 @@ export const EnemyData = ({ number }) => {
       {groupA.map((value, index) => (
         <Enemy2 value={value} key={index} />
       ))}
-      <mesh name="end" ref={ref}>
-        <boxBufferGeometry attach="geometry" args={args} />
-        <meshStandardMaterial
-          attach="material"
-          color={"orange"}
-          transparent
-          opacity={0.3}
-        />
-      </mesh>
     </group>
   );
 };
