@@ -3,33 +3,25 @@ import React, { useRef, useState } from "react";
 import * as THREE from "three";
 import { View, Text } from "react-native";
 import { Canvas, useFrame, useThree, extend } from "react-three-fiber";
-// import CameraController from "./components/CameraController";
 import { OrbitControls } from "@react-three/drei";
 import { Physics, useBox, usePlane, useSphere } from "use-cannon";
 import { useStore } from "./Global";
 import styles from "./styles";
-// import { useGlobalState } from "./Global";
 
 import Floor from "./components/Floor";
 import Player from "./components/Player";
-import { EnemyData, Enemy } from "./components/Enemy";
+import { EnemyData } from "./components/Enemy";
 
 /*
  * 1. 表示される入り口
  */
 const App = () => {
-  // const [, setJump] = useGlobalState("tap");
-  // const steteTap = useStore((state) => state.tap);
   const tapTrue = useStore((state) => state.tapTrue);
   return (
     <View style={styles.app}>
       <Canvas
         camera={{
-          // position: [-0.2, 3, 10],
-          position: [0, 0, 50],
-          // lookAt: [0, 0, 0],
-          // rotation: [0.1, -0.2, 0],
-          // quaternion: [0.0, -0.1, 0.0],
+          position: [0, 0, 30],
           near: 0.1,
           far: 500
         }}
@@ -51,8 +43,7 @@ const App = () => {
           defaultContactMaterial={{ restitution: 0 }}
         >
           <Player />
-          <EnemyData number={5}>{/* <Enemy /> */}</EnemyData>
-          {/* <Enemy /> */}
+          <EnemyData number={10} />
           <Floor position={[0, -1, 0]} args={[1500, 0.5, 3]} />
         </Physics>
       </Canvas>
