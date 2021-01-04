@@ -1,7 +1,7 @@
 // import { createGlobalState } from "react-hooks-global-state";
 
 import create from "zustand";
-import createEnemysList from "./components/Enemy";
+import TypesOfEnemies from "./components/Enemy";
 
 export const Scene = {
   Opning: 0,
@@ -13,7 +13,5 @@ export const useStore = create((set) => ({
   tap: false,
   tapTrue: () => set((state) => ({ tap: true })),
   tapFalse: () => set((state) => ({ tap: false })),
-  speed: 0.08,
-  enemyGroupA: createEnemysList,
-  setEnemyGroupA: (x) => set((state) => ({ enemyGroupA: x }))
+  speed: 0.08
 }));

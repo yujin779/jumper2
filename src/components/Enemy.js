@@ -19,21 +19,6 @@ import { useGLTF, PerspectiveCamera } from "@react-three/drei";
 
 const speed = 0.04;
 
-export const createEnemysList = (number, startX) => {
-  const enemysList = [];
-  // const startX = 15;
-  // const number = 10;
-  for (let i = 0; i < number; i++) {
-    let p = startX;
-    console.log("sttx", p);
-    if (i !== 0) p = enemysList[i - 1].position.x + 5;
-
-    enemysList.push({ position: { x: p, y: 0, z: 0 } });
-  }
-  console.log("enemysList", enemysList);
-  return enemysList;
-};
-
 const EnemyColider = ({ value, index }) => {
   // 物理演算させるボックスのサイズ
   const args = [1, 2, 1];
@@ -42,11 +27,12 @@ const EnemyColider = ({ value, index }) => {
     fixedRotation: true,
     mass: 1,
     args: args,
-    position: [value.position.x, value.position.y, value.position.z]
+    position: [value.positionX, 0, 0]
   };
   const [ref, api] = useBox(() => physicsBox);
   useFrame(() => {
-    api.position.set(value.position.x, value.position.y, value.position.z);
+    //ポジション修正要
+    api.position.set(value.positionX, 0, 0);
   });
   return (
     <mesh ref={ref} key={index}>
@@ -61,19 +47,34 @@ const EnemyColider = ({ value, index }) => {
   );
 };
 
+export const createEnemysList = (number, startX, distance) => {
+  const enemysList = [];
+  // const startX = 15;
+  // const number = 10;
+  for (let i = 0; i < number; i++) {
+    let p = startX;
+    console.log("sttx", p);
+    if (i !== 0) p = enemysList[i - 1].positionX + distance;
+
+    enemysList.push({ positionX: p, type: TypesOfEnemies[0] });
+  }
+  console.log("enemysList", enemysList);
+  return enemysList;
+};
+
+const TypesOfEnemies = [
+  {
+    obj: { position: { x: -2.5, y: -0.7 }, rotation: { x: 1.5 } }
+  }
+];
+
 const EnemyObj = ({ value, index }) => {
   const { nodes, materials, animations } = useGLTF(littleCactus);
   const gltfRef = useRef();
-  // nodes.ObjObject.rotateX.x = 180;
-  // console.log("rx", gltfRef.current.rotation.x);
-  // console.log("gltfRef", gltfRef);
-  // const dummy = useMemo(() => new THREE.Object3D(), []);
   useFrame(() => {
-    gltfRef.current.position.x = value.position.x;
-    gltfRef.current.rotation.x = 1.5;
-    // console.log("rx",gltfRef.current.rotation.x);
-    // nodes.ObjObject.rotateX.x += 0.1;
-    // gltfRef.current
+    gltfRef.current.position.x = value.positionX + value.type.obj.position.x;
+    gltfRef.current.rotation.x = value.type.obj.rotation.x;
+    gltfRef.current.position.y = value.type.obj.position.y;
   });
   return (
     <group>
@@ -93,18 +94,18 @@ export const EnemyData = ({ number }) => {
   // この値になったら位置を再設定
   const returnX = 0;
   const startX = 10;
-  const distance = 5;
-  const [groupA] = useState(createEnemysList(number, startX));
-
+  const distance = 3;
+  const [groupA] = useState(createEnemysList(number, startX, distance));
+  console.log(groupA);
   useFrame(() => {
     groupA.map((p) => {
-      if (p.position.x < returnX)
-        p.position.x =
+      if (p.positionX < returnX)
+        p.positionX =
           Math.max.apply(
             null,
-            groupA.map((o) => o.position.x)
+            groupA.map((o) => o.positionX)
           ) + distance;
-      return (p.position.x -= speed);
+      return (p.positionX -= speed);
     });
   });
 
